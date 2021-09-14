@@ -10,14 +10,20 @@ const API_KEY = "c2d1935b0df91870ab15c09d3f83e0c0"
 export default function () {
   const [loading, setLoading] = useState(true)
   const [temp, setTemp] = useState(null)
+  const [condition, setCondition] = useState("Clear")
 
   getWeather = async (latitude, longitude) => {
-    const { data } = await axios.get(
+    const {
+      data: {
+        main: { temp },
+        weather,
+      },
+    } = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`
     )
     setLoading(false)
-    setTemp(data.main.temp)
-    console.log(data)
+    setTemp(temp)
+    setCondition(weather[0].main)
   }
 
   getLocation = async () => {
@@ -36,5 +42,9 @@ export default function () {
     getLocation()
   }, [])
 
-  return loading ? <Loading /> : <Weather temp={Math.round(temp)} />
+  return loading ? (
+    <Loading />
+  ) : (
+    <Weather temp={Math.round(temp)} condition={condition} />
+  )
 }
